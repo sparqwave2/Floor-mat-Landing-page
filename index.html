@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WIDOmart 3D Floral Floor Mat</title>
+    <style>
+        :root {
+            --bg-color: #fcfbfa;
+            --primary-color: #721c24; 
+            --accent-color: #155724; 
+            --text-color: #2c2c2c;
+            --white: #ffffff;
+            --section-padding: 35px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.4; scroll-behavior: smooth; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        
+        section { padding: var(--section-padding) 0; }
+        .btn-primary { display: block; background: var(--primary-color); color: white; text-align: center; padding: 12px; font-size: 18px; font-weight: bold; text-decoration: none; border-radius: 8px; max-width: 320px; margin: 15px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: none; cursor: pointer;}
+        
+        .section-title { text-align: center; font-size: 24px; margin-bottom: 20px; color: var(--primary-color); font-weight: 700; width: 100%; }
+
+        /* Hero */
+        .hero { text-align: center; background: #fff; padding: 25px 0; }
+        .hero h1 { font-size: 26px; color: var(--primary-color); margin-bottom: 8px; font-weight: 800; line-height: 1.2; }
+        .hero p { font-size: 15px; color: #555; margin-bottom: 12px; }
+        .hero-img { width: 100%; max-width: 500px; border-radius: 12px; }
+
+        /* Highlight Section */
+        .highlight-sec { background: #f8f9fa; padding: var(--section-padding) 0; }
+        .highlight-grid { display: flex; flex-wrap: wrap; align-items: center; gap: 25px; }
+        .highlight-img { flex: 1; min-width: 300px; text-align: center; }
+        .highlight-img img { width: 100%; max-width: 400px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .highlight-text { flex: 1; min-width: 300px; }
+        
+        .feature-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .feature-item-box { background: white; padding: 12px; border-radius: 10px; border: 1px solid #eee; display: flex; gap: 12px; align-items: center; }
+        .feature-icon { font-size: 18px; background: #fff5f5; padding: 6px; border-radius: 8px; display: inline-flex; }
+        .feature-info-text h3 { font-size: 15px; color: #111; margin-bottom: 2px; }
+        .feature-info-text p { font-size: 13px; color: #666; }
+
+        /* ==========================================================================
+           🎨 WIDOmart ইউনিক বর্ডারলেস ৩D প্যাকেজ সিএসএস
+           ========================================================================== */
+        .checkout-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; align-items: start; width: 100%; }
+        .wido-mat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
+        
+        .mat-item {
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .mat-item:hover { transform: translateY(-4px); }
+        
+        .mat-card-top { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; }
+        
+        /* 🎯 সিলেকশন সার্কেল ইন্ডিকেটর - ইমেজের ডান পাশের ঠিক মাঝখানে (মিডল) ফিক্সড */
+        .mat-indicator { 
+            position: absolute; 
+            top: 50%; 
+            right: -6px;       /* ইমেজের ডান লাইনে ফোকাসড */
+            transform: translateY(-50%); /* নিখুঁতভাবে লম্বালম্বি মাঝখানে রাখার ট্রিক */
+            width: 18px; 
+            height: 18px; 
+            border: 2px solid #ced4da; 
+            border-radius: 50%; 
+            background: #ffffff; 
+            z-index: 30;       /* ব্যাজের চেয়ে লেয়ার ওপরে রাখা হলো যাতে ক্লিক করতে সমস্যা না হয় */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .mat-item.selected .mat-indicator { border-color: #28a745; }
+        .mat-item.selected .mat-indicator::after { content: ''; width: 8px; height: 8px; background: #28a745; border-radius: 50%; display: block; margin: 3px auto 0 auto; }
+
+        /* 🎯 ইমেজের ৩D কন্টেইনার (কোনো অংশ যেন একটুও না কাটে) */
+        .mat-img {
+            width: 100% !important;
+            max-width: 160px !important;
+            height: 160px !important;
+            border-radius: 14px !important;
+            object-fit: contain !important; /* ছবি বা টেক্সট ওপর থেকে এক ফোঁটাও কাটবে না */
+            background: #ffffff;
+            cursor: pointer;
+            padding: 6px;      /* ছবির চারপাশের সেফটি গ্যাপ */
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.06) !important;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        /* সিলেক্টেড কার্ডের গ্লো বর্ডার */
+        .mat-item.selected .mat-img {
+            box-shadow: 0 12px 25px rgba(114, 28, 36, 0.25), 0 4px 10px rgba(114, 28, 36, 0.15) !important;
+            border: 2px solid var(--primary-color) !important;
+        }
+
+        .mat-card-bottom { width: 100%; text-align: center; margin-top: 8px; }
+        .mat-card-bottom h4 { font-size: 14px; color: #111; font-weight: 700; margin-bottom: 1px; }
+        .mat-card-bottom p { font-size: 11px; color: #666; margin-bottom: 3px; }
+        .mat-price { font-size: 15px; color: var(--primary-color); font-weight: bold; }
+        .mat-badge-3pcs { background:#ffc107; font-size:9px; padding:1px 4px; border-radius:3px; color:#000; font-weight: bold; display: inline-block; margin-bottom: 2px; }
+
+        /* 🎯 আরজিবি জ্বলমলে ব্যাজ - ছবির বর্ডারের ঠিক ভেতরে ডানদিকের ওপরের কোণায় ফিক্সড */
+        .wido-rgb-badge {
+            position: absolute;
+            top: 8px;          /* ছবির বর্ডারের একদম ভেতরে ওপর থেকে গ্যাপ */
+            right: 8px;        /* ছবির বর্ডারের একদম ভেতরে ডান থেকে গ্যাপ */
+            left: auto;        /* বামের পজিশন সম্পূর্ণ অফ */
+            font-size: 7.5px;    /* সাইজ আরেকটু ছোট করা হলো যাতে টেক্সট ওভারল্যাপ না হয় */
+            font-weight: bold;
+            color: #fff;
+            padding: 2px 5px;  /* বক্সটি আরও ছোট ও স্লিম করা হয়েছে */
+            border-radius: 4px;
+            z-index: 20;       /* ইন্ডিকেটরের সাথে যেন জ্যাম না লাগে */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            animation: rgbGlow 3s linear infinite;
+            white-space: nowrap; /* লেখা যেন ভেঙে দুই লাইনে না যায় */
+        }
+        @keyframes rgbGlow {
+            0% { background-color: #ff0055; box-shadow: 0 0 6px #ff0055; }
+            33% { background-color: #00ff66; box-shadow: 0 0 6px #00ff66; color: #000; }
+            66% { background-color: #00ffff; box-shadow: 0 0 6px #00ffff; color: #000; }
+            100% { background-color: #ff0055; box-shadow: 0 0 6px #ff0055; }
+        }
+
+        /* 📋 ডান পাশের চেকআউট ফর্ম এবং সামারি বক্স সিএসএস */
+        .checkout-sidebar { background: white; border: 1px solid #eef0f2; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .sidebar-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        
+        .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; }
+        .summary-table td { padding: 6px 0; color: #555; }
+        .summary-table tr.total-row td { border-top: 1px dashed #ccc; font-size: 16px; font-weight: bold; color: #000; padding-top: 10px; }
+        .method-option { display: flex; align-items: center; gap: 8px; border: 1px solid #28a745; padding: 10px; border-radius: 6px; background-color: #f4faf6; font-size: 14px; font-weight: 600; margin-bottom: 12px;}
+
+        .input-group { margin-bottom: 12px; }
+        .input-group input, .input-group textarea { width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; background: #fafafa; }
+
+        /* 🎯 ডাইনামিক বাটন স্টাইল: শুরুতে গ্রে, সব ঠিক হলে গ্রিন হবে */
+        .btn-confirm-dynamic {
+            display: block;
+            width: 100%;
+            background: #9fa8b6; /* শুরুতে গ্রে কালার */
+            color: #ffffff;
+            text-align: center;
+            padding: 14px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: not-allowed; /* ডিফল্ট কার্সার অফ */
+            box-shadow: 0 4px 12px rgba(159, 168, 182, 0.2);
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        /* ⚡ যখন ফর্মের সবকিছু ঠিক থাকবে, জাভাস্ক্রিপ্ট এই 'active' ক্লাসটি চালু করবে */
+        .btn-confirm-dynamic.active {
+            background: #28a745 !important; /* আকর্ষণীয় উজ্জ্বল সবুজ */
+            cursor: pointer !important;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
+        }
+        .btn-confirm-dynamic.active:active { transform: scale(0.98); }
+
+        /* 🎯 ইনপুট বক্সের পাশে তাৎক্ষণিক ওয়ার্নিং পপ-আপ টেক্সট */
+        .input-warning {
+            display: none; /* ডিফল্ট অবস্থায় লুকানো থাকবে */
+            color: #dc3545;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 4px;
+            text-align: left;
+        }
+
+        /* 🎯 কাস্টম সাকসেস পপ-আপ মডাল ডিজাইন */
+        .wido-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none; /* জাভাস্ক্রিপ্ট দিয়ে ওপেন হবে */
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .wido-popup-box {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 400px;
+            width: 85%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            animation: popupScale 0.3s ease-out;
+        }
+        @keyframes popupScale {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .wido-popup-icon {
+            font-size: 45px;
+            color: #ffc107;
+            margin-bottom: 12px;
+        }
+        .wido-popup-box h3 {
+            color: #721c24;
+            font-size: 20px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .wido-popup-box p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .wido-popup-close-btn {
+            background: #721c24;
+            color: #fff;
+            border: none;
+            padding: 10px 25px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .support-divider { border-top: 2px dashed #e2e8f0; margin: 20px 0; width: 100%; }
+        .support-wrapper { text-align: center; width: 100%; }
+        .support-title { font-size: 14px; font-weight: bold; color: #718096; margin-bottom: 15px; }
+
+        .support-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; font-size: 15px; font-weight: bold; text-decoration: none; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); transition: transform 0.1s; }
+        .support-btn:active { transform: scale(0.99); }
+        .btn-call { background: #f1f3f5; color: #2d3748; border: 1px solid #e2e8f0; }
+        .btn-call .support-icon { color: #e53e3e; }
+        .btn-whatsapp { background: #25d366; color: #ffffff; border: none; }
+        .btn-messenger { background: #0064ff; color: #ffffff; border: none; margin-bottom: 0; }
+
+        /* 📱 মোবাইল রেসপন্সিভনেস (মোবাইলেও যেন ওভারল্যাপ বা কাটাকাটি না হয়) */
+        @media (max-width: 768px) {
+            .checkout-layout { display: flex; flex-direction: column; gap: 15px; width: 100%; }
+            .wido-mat-grid { gap: 10px; }
+            .mat-img { 
+                height: 145px !important; 
+                padding: 5px; 
+            }
+            .mat-card-bottom h4 { font-size: 13px; }
+            .mat-indicator { 
+                right: -4px; 
+                width: 16px; 
+                height: 16px; 
+            }
+            .mat-indicator::after { width: 6px; height: 6px; margin: 2px auto 0 auto; }
+            .wido-rgb-badge { 
+                top: 6px; 
+                right: 6px;    /* মোবাইলের স্ক্রিন অনুযায়ী ডান কোণায় পারফেক্ট অ্যাডজাস্ট */
+                font-size: 7px; 
+                padding: 1.5px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ১. হেডার ও হিরো সেকশন -->
+    <header class="hero">
+        <div class="container">
+            <h1>WIDOmart প্রিমিয়াম 3D ফ্লোরাল ম্যাট</h1>
+            <!-- 🎯 সাবটাইটেল টেক্সট সম্পূর্ণ কারেক্ট করা হয়েছে -->
+            <p>আপনার ড্রয়িং রুম কিংবা বেডরুমকে দিন এক রাজকীয় ও ইউনিক লুক।</p>
+            <img src="unique.jpg" alt="WIDOmart Unique Bedroom Look" class="hero-img">
+            <a href="#order-section" class="btn-primary">এখনই অর্ডার করুন</a>
+        </div>
+    </header>
+
+    <!-- ২. হাইলাইটস ও স্পেসিফিকেশন সেকশন -->
+    <section class="highlight-sec">
+        <div class="container">
+            <div class="highlight-grid">
+                <div class="highlight-img">
+                    <img src="Untitled design (2).jpg" alt="Floor Mat Size Specification">
+                </div>
+                <div class="highlight-text">
+                    <h2 class="section-title" style="text-align: left;">পারফেক্ট সাইজ ও প্রিমিয়াম কোয়ালিটি</h2>
+                    <div class="feature-list">
+                        <div class="feature-item-box">
+                            <span class="feature-icon">📍</span>
+                            <div class="feature-info-text">
+                                <!-- 🎯 বানান সংশোধন করে 'সঠিক মাপ' করা হয়েছে -->
+                                <h3>সঠিক মাপ</h3>
+                                <p>২৪ ইঞ্চি (৬১ সেমি) ডায়ামিটার যা যেকোনো স্পেসের জন্য স্ট্যান্ডার্ড ও মানানসই।</p>
+                            </div>
+                        </div>
+                        <div class="feature-item-box">
+                            <span class="feature-icon">✨</span>
+                            <div class="feature-info-text">
+                                <h3>৩ডি প্রিমিয়াম প্রিন্ট</h3>
+                                <p>উচ্চমানের জ্যাকার্ড টেক্সচার, যার কালার সহজে নষ্ট হবে না এবং দীর্ঘদিন নতুনের মত থাকবে।</p>
+                            </div>
+                        </div>
+                        <div class="feature-item-box">
+                            <span class="feature-icon">🛡️</span>
+                            <div class="feature-info-text">
+                                <h3>অ্যান্টি-স্লিপ গ্রিপ</h3>
+                                <p>পিচ্ছিল টাইলস বা ফ্লোরেও নড়াচড়া করবে না, যা আপনাকে দিবে শতভাগ নিরাপত্তা।</p>
+                            </div>
+                        </div>
+                        <div class="feature-item-box">
+                            <span class="feature-icon">🧼</span>
+                            <div class="feature-info-text">
+                                <h3>সহজে ধোয়া যায়</h3>
+                                <p>ওয়াটার অ্যাবজর্বেন্ট টেকনোলজি ও ঝটপট পরিষ্কার করার চমৎকার সুবিধা।</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ৩. আপনার পছন্দের কম্বো প্যাক বেছে নিন ও চেকআউট সেকশন -->
+    <section id="order-section" style="background: #fff; padding: 20px 0;">
+        <div class="container">
+            <div class="checkout-section-wrapper">
+                
+                <h2 class="section-title">আপনার পছন্দের কম্বো প্যাকটি বেছে নিন</h2>
+                
+                <div class="checkout-layout">
+                    
+                    <!-- বাম পাশ: আল্ট্রা-প্রিমিয়াম ৩D গ্রিড লেআউট -->
+                    <div class="wido-mat-grid">
+                        
+                        <!-- প্যাকেজ ১ (Purple Rose) -->
+                        <div class="mat-item selected" data-price="750" data-delivery="80" data-name="Purple Rose (2 Pcs Combo)">
+                            <div class="mat-card-top">
+                                <img src="2 pcs combo (1).jpg" alt="Purple Rose" class="mat-img">
+                                <div class="mat-indicator"></div>
+                            </div>
+                            <div class="mat-card-bottom">
+                                <!-- পার্পেল কালার টেক্সট -->
+                                <h4 style="color: #6f42c1;">Purple Rose</h4>
+                                <p>২ পিস কম্বো সেট</p>
+                                <div class="mat-price">৳ ৭৫০</div>
+                            </div>
+                        </div>
+
+                        <!-- প্যাকেজ ২ (Red Rose) -->
+                        <div class="mat-item" data-price="750" data-delivery="80" data-name="Red Rose (2 Pcs Combo)">
+                            <div class="mat-card-top">
+                                <img src="2 pcs combo (2).jpg" alt="Red Rose" class="mat-img">
+                                <div class="mat-indicator"></div>
+                            </div>
+                            <div class="mat-card-bottom">
+                                <!-- রেড কালার টেক্সট -->
+                                <h4 style="color: #dc3545;">Red Rose</h4>
+                                <p>২ পিস কম্বো সেট</p>
+                                <div class="mat-price">৳ ৭৫০</div>
+                            </div>
+                        </div>
+
+                        <!-- প্যাকেজ ৩ (Green Lotus) -->
+                        <div class="mat-item" data-price="750" data-delivery="80" data-name="Green Lotus (2 Pcs Combo)">
+                            <div class="mat-card-top">
+                                <img src="2 pcs combo (3).jpg" alt="Green Lotus" class="mat-img">
+                                <div class="mat-indicator"></div>
+                            </div>
+                            <div class="mat-card-bottom">
+                                <!-- গ্রিন কালার টেক্সট -->
+                                <h4 style="color: #155724;">Green Lotus</h4>
+                                <p>২ পিস কম্বো সেট</p>
+                                <div class="mat-price">৳ ৭৫০</div>
+                            </div>
+                        </div>
+
+                        <!-- প্যাকেজ ৪ (Mix Combo Set - ৩ পিস) -->
+                        <div class="mat-item" data-price="990" data-delivery="50" data-name="Mix 3 Pcs Combo Set">
+                            <div class="mat-card-top">
+                                <!-- ⚡ আরজিবি ব্যাজ এখন বাম পাশে, কাটবে না এবং লেখার ওপর যাবেবিধা -->
+                                <span class="wido-rgb-badge">ধামাকা অফার</span>
+                                <img src="2 pcs combo (4).jpg" alt="Mix Combo Set" class="mat-img">
+                                <div class="mat-indicator"></div>
+                            </div>
+                            <div class="mat-card-bottom">
+                                <div class="mat-badge-3pcs">৩ পিস</div>
+                                <!-- ব্ল্যাক কালার টেক্সট -->
+                                <h4 style="color: #000000;">Mix Combo Set</h4>
+                                <p>ধামাকা কম্বো</p>
+                                <div class="mat-price">৳ ৯৯০</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ডান পাশ: অর্ডার সামারি ও শিপিং ফর্ম -->
+                    <div class="checkout-sidebar">
+                        <div class="sidebar-title">অর্ডার সামারি ও চেকআউট</div>
+                        
+                        <table class="summary-table" id="summary-table">
+                            <tr>
+                                <td>সাবটোটাল:</td>
+                                <td style="text-align: right;">৳ <span id="subtotal-disp">750</span></td>
+                            </tr>
+                            <tr>
+                                <td>ডেলিভারি চার্জ:</td>
+                                <td style="text-align: right;">৳ <span id="delivery-disp">80</span></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>সর্বমোট:</td>
+                                <td style="text-align: right;">৳ <span id="total-disp">830</span></td>
+                            </tr>
+                        </table>
+
+                        <div class="payment-methods">
+                            <div class="method-option">
+                                <input type="radio" checked style="accent-color: #28a745; margin-right: 5px;">
+                                <span>ক্যাশ অন ডেলিভারি (হাতে পেয়ে টাকা দেবেন)</span>
+                            </div>
+                        </div>
+
+                        <div style="background: #f1f3f5; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; margin-bottom: 15px; text-align: center;">
+                            <p style="font-size: 13px; font-weight: 600; color: #4a5568; margin-bottom: 8px; line-height: 1.4;">
+                                ১ পিস নিতে চান অথবা নিজের মতো আলাদা কালার কম্বো মেলাতে চান?
+                            </p>
+                            <a href="https://m.me/widomartshop?ref=floor_mat_custom" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: #0084ff; color: white; text-decoration: none; padding: 8px 15px; border-radius: 6px; font-size: 13px; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 132, 255, 0.2);">
+                                💬 এখানে ক্লিক করে মেসেজ করুন
+                            </a>
+                        </div>
+
+                        <form id="orderForm">
+                            <div class="input-group">
+                                <input type="text" id="name" required placeholder="আপনার সম্পূর্ণ নাম">
+                            </div>
+                            
+                            <div class="input-group" style="position: relative;">
+                                <input type="text" id="phone" required placeholder="মোবাইল নম্বর">
+                                <span id="phone-warning" class="input-warning">⚠️ ০১ দিয়ে শুরু করে সঠিক ১১ ডিজিটের নম্বর দিন</span>
+                            </div>
+                            
+                            <div class="input-group">
+                                <textarea id="address" rows="3" required placeholder="জেলা, থানা, এলাকা ও রোড নম্বর বিস্তারিত লিখুন"></textarea>
+                            </div>
+                            
+                            <button type="submit" id="submitBtn" class="btn-confirm-dynamic" disabled>অর্ডার কনফর্ম করুন</button>
+                        </form>
+
+                        <div class="wido-popup-overlay" id="orderPendingModal">
+                            <div class="wido-popup-box">
+                                <div class="wido-popup-icon">⏳</div>
+                                <h3>আপনার অর্ডারটি পেন্ডিং এ আছে</h3>
+                                <p>আমাদের প্রতিনিধি দল কল দিয়ে আপনার অর্ডারটি কনফর্ম করে নিবে। সাথে থাকুন, ধন্যবাদ।</p>
+                                <button class="wido-popup-close-btn" onclick="closePendingModal()">ঠিক আছে</button>
+                            </div>
+                        </div>
+                        
+                        <div class="support-divider"></div>
+                        
+                        <div class="support-wrapper">
+                            <div class="support-title">হেল্প এবং সাপোর্ট</div>
+                            <a href="tel:01879775004" class="support-btn btn-call">
+                                <span class="support-icon">📞</span> কল করতে এখানে ক্লিক করুন
+                            </a>
+                            <a href="https://wa.me/8801879775004?text=আসসালামু-আলাইকুম,%20WIDOmart%20থেকে%20ফ্লোর%20ম্যাট%20নিতে%20চাই।" target="_blank" class="support-btn btn-whatsapp">
+                                <span class="support-icon">💬</span> হোয়াটসঅ্যাপে মেসেজ দিন
+                            </a>
+                            <a href="https://m.me/widomartshop?ref=floor_mat_support" target="_blank" class="support-btn btn-messenger">
+                                <span class="support-icon">💬</span> ফেসবুকে মেসেজ দিন
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+       ⚙️ সম্পূর্ণ সচল, জুম-ফ্রি এবং ফিক্সড জাভাস্ক্রিপ্ট লজিক
+       ========================================================================== -->
+    <script>
+        let selectedPrice = 750; 
+        let selectedDelivery = 80; 
+        
+        const subtotalDisp = document.getElementById('subtotal-disp');
+        const deliveryDisp = document.getElementById('delivery-disp');
+        const totalDisp = document.getElementById('total-disp');
+        const matItems = document.querySelectorAll('.mat-item');
+
+        function updateOrderSummary() {
+            subtotalDisp.innerText = selectedPrice;
+            deliveryDisp.innerText = selectedDelivery;
+            totalDisp.innerText = selectedPrice + selectedDelivery;
+        }
+
+        matItems.forEach(item => {
+            item.addEventListener('click', function() {
+                matItems.forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                selectedPrice = parseInt(this.getAttribute('data-price'));
+                selectedDelivery = parseInt(this.getAttribute('data-delivery'));
+                
+                updateOrderSummary();
+                validateForm(); // প্যাকেজ চেঞ্জ হলেও বাটন স্ট্যাটাস রি-চেক হবে
+            });
+        });
+
+        // ==========================================================================
+        // 🛡️ রিয়েল-টাইম লাইভ ভ্যালিডেশন এবং গ্রিন বাটন অ্যাক্টিভেশন লজিক
+        // ==========================================================================
+        const nameInput = document.getElementById('name');
+        const phoneInput = document.getElementById('phone');
+        const addressInput = document.getElementById('address');
+        const submitBtn = document.getElementById('submitBtn');
+        const phoneWarning = document.getElementById('phone-warning');
+        const orderForm = document.getElementById('orderForm');
+
+        function validateForm() {
+            const nameVal = nameInput.value.trim();
+            const phoneVal = phoneInput.value.trim();
+            const addressVal = addressInput.value.trim();
+
+            // কড়া বাংলাদেশ মোবাইল নম্বর প্যাটার্ন (০১ দিয়ে শুরু হয়ে মোট ১১ ডিজিট)
+            const phonePattern = /^01[3-9]\d{8}$/;
+            let isPhoneValid = phonePattern.test(phoneVal);
+
+            // লাইভ ওয়ার্নিং মেসেজ হ্যান্ডলিং
+            if (phoneVal.length > 0) {
+                // যদি ক্যাপিটাল লেটার থাকে, সংখ্যা ছাড়া অন্য কিছু থাকে বা ডিজিট সংখ্যায় ভুল থাকে
+                if (/[A-Z]/.test(phoneInput.value) || isNaN(phoneVal) || phoneVal.length !== 11 || !isPhoneValid) {
+                    phoneWarning.style.display = 'block';
+                    phoneWarning.innerText = '⚠️ ভুল ইনপুট! দয়া করে ০১ দিয়ে শুরু হওয়া সঠিক ১১ ডিজিটের নম্বর দিন।';
+                    isPhoneValid = false; // নম্বর ইনভ্যালিড সেট
+                } else {
+                    phoneWarning.style.display = 'none';
+                }
+            } else {
+                phoneWarning.style.display = 'none';
+            }
+
+            // বাটন লাইভ একটিভ/ইনঅ্যাক্টিভ করার মূল লজিক (লেন্থ কন্ডিশন সহজ করা হয়েছে)
+            if (nameVal.length > 0 && addressVal.length > 0 && isPhoneValid) {
+                submitBtn.classList.add('active');
+                submitBtn.removeAttribute('disabled');
+            } else {
+                submitBtn.classList.remove('active');
+                submitBtn.setAttribute('disabled', 'true');
+            }
+        }
+
+        // ⚡ ইভেন্ট জ্যামিং এড়াতে 'input', 'keyup' এবং 'change' ৩টি ইভেন্টেই লিসেনার দেওয়া হলো
+        const inputEvents = ['input', 'keyup', 'change'];
+        
+        inputEvents.forEach(evt => {
+            nameInput.addEventListener(evt, validateForm);
+            phoneInput.addEventListener(evt, validateForm);
+            addressInput.addEventListener(evt, validateForm);
+        });
+
+        // ফর্ম সাবমিট হলে কাস্টম স্ক্রিন পেন্ডিং পপ-আপ ওপেন হবে
+        orderForm.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            
+            // ডাবল চেক করার জন্য সাবমিট করার মুহূর্তে নম্বর ভ্যালিডেশন
+            const phoneVal = phoneInput.value.trim();
+            const phonePattern = /^01[3-9]\d{8}$/;
+            
+            if (!phonePattern.test(phoneVal)) {
+                phoneWarning.style.display = 'block';
+                phoneInput.focus();
+                return false;
+            }
+
+            const pendingModal = document.getElementById('orderPendingModal');
+            if(pendingModal) {
+                pendingModal.style.display = 'flex'; // মডাল ওপেন
+            } else {
+                alert('আপনার অর্ডারটি পেন্ডিং এ আছে! আমাদের প্রতিনিধি দল কল দিয়ে আপনার অর্ডারটি কনফর্ম করে নিবে। সাথে থাকুন, ধন্যবাদ।');
+                orderForm.reset();
+                submitBtn.classList.remove('active');
+                submitBtn.setAttribute('disabled', 'true');
+                selectedPrice = 750;
+                selectedDelivery = 80;
+                updateOrderSummary();
+            }
+        });
+
+        // মডাল বন্ধ করার গ্লোবাল ফাংশন
+        window.closePendingModal = function() {
+            const pendingModal = document.getElementById('orderPendingModal');
+            if(pendingModal) pendingModal.style.display = 'none';
+            orderForm.reset(); // ফর্ম ক্লিয়ার
+            submitBtn.classList.remove('active');
+            submitBtn.setAttribute('disabled', 'true');
+            selectedPrice = 750;
+            selectedDelivery = 80;
+            updateOrderSummary();
+        }
+    </script>
+</body>
+</html>
