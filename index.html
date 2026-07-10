@@ -513,8 +513,14 @@
             });
         });
 
+        // 🎯 বাংলা নম্বরকে ইংলিশ নম্বরে কনভার্ট করার গ্লোবাল ইউটিলিটি
+        function convertBanglaToEnglish(str) {
+            const banglaDigits = {'০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9'};
+            return str.replace(/[০-৯]/g, function(w) { return banglaDigits[w]; });
+        }
+
         // ==========================================================================
-        // 🛡️ রিয়েল-টাইম লাইভ ভ্যালিডেশন এবং গ্রিন বাটন অ্যাক্টিভেশন লজিক
+        // 🛡️ বাংলা ও ইংরেজি (উভয়) নম্বর সচল এবং রিয়েল-টাইম ভ্যালিডেশন লজিক
         // ==========================================================================
         const nameInput = document.getElementById('name');
         const phoneInput = document.getElementById('phone');
@@ -525,28 +531,32 @@
 
         function validateForm() {
             const nameVal = nameInput.value.trim();
-            const phoneVal = phoneInput.value.trim();
+            const rawPhoneVal = phoneInput.value.trim();
             const addressVal = addressInput.value.trim();
 
-            // কড়া বাংলাদেশ মোবাইল নম্বর প্যাটার্ন (০১ দিয়ে শুরু হয়ে মোট ১১ ডিজিট)
+            // কাস্টমার বাংলায় লিখুক আর ইংলিশে, আমরা ওটাকে ব্যাকএন্ডে ইংলিশ করে চেক করব
+            const phoneVal = convertBanglaToEnglish(rawPhoneVal);
+
+            // বাংলাদেশ মোবাইল নম্বর প্যাটার্ন (01 দিয়ে শুরু হয়ে মোট 11 ডিজিট)
             const phonePattern = /^01[3-9]\d{8}$/;
             let isPhoneValid = phonePattern.test(phoneVal);
 
             // লাইভ ওয়ার্নিং মেসেজ হ্যান্ডলিং
             if (phoneVal.length > 0) {
-                // যদি ক্যাপিটাল লেটার থাকে, সংখ্যা ছাড়া অন্য কিছু থাকে বা ডিজিট সংখ্যায় ভুল থাকে
-                if (/[A-Z]/.test(phoneInput.value) || isNaN(phoneVal) || phoneVal.length !== 11 || !isPhoneValid) {
+                // যদি নম্বরটি ইংলিশ 01 বা বাংলা ০১ দিয়ে শুরু না হয়, অথবা ১১ ডিজিট না হয়
+                if (!phoneVal.startsWith('01') || /[A-Z]/.test(phoneInput.value) || isNaN(phoneVal) || phoneVal.length !== 11 || !isPhoneValid) {
                     phoneWarning.style.display = 'block';
-                    phoneWarning.innerText = '⚠️ ভুল ইনপুট! দয়া করে ০১ দিয়ে শুরু হওয়া সঠিক ১১ ডিজিটের নম্বর দিন।';
-                    isPhoneValid = false; // নম্বর ইনভ্যালিড সেট
+                    // কাস্টমারকে বাংলা এবং ইংলিশ দুইটারই ক্লিয়ার মেসেজ দেওয়া হলো
+                    phoneWarning.innerHTML = '⚠️ 01/০১ দিয়ে শুরু করে সঠিক 11/১১ ডিজিটের নম্বর দিন।';
+                    isPhoneValid = false; 
                 } else {
-                    phoneWarning.style.display = 'none';
+                    phoneWarning.style.display = 'none'; // সব ঠিক থাকলে ওয়ার্নিং অফ
                 }
             } else {
                 phoneWarning.style.display = 'none';
             }
 
-            // বাটন লাইভ একটিভ/ইনঅ্যাক্টিভ করার মূল লজিক (লেন্থ কন্ডিশন সহজ করা হয়েছে)
+            // বাটন লাইভ একটিভ/ইনঅ্যাক্টিভ করার লজিক
             if (nameVal.length > 0 && addressVal.length > 0 && isPhoneValid) {
                 submitBtn.classList.add('active');
                 submitBtn.removeAttribute('disabled');
@@ -556,28 +566,20 @@
             }
         }
 
-        // ⚡ ইভেন্ট জ্যামিং এড়াতে 'input', 'keyup' এবং 'change' ৩টি ইভেন্টেই লিসেনার দেওয়া হলো
+        // টাইপ করার সাথে সাথেই চেক হবে
         const inputEvents = ['input', 'keyup', 'change'];
-        
         inputEvents.forEach(evt => {
             nameInput.addEventListener(evt, validateForm);
             phoneInput.addEventListener(evt, validateForm);
             addressInput.addEventListener(evt, validateForm);
         });
 
-        // ফর্ম সাবমিট হলে কাস্টম স্ক্রিন পেন্ডিং পপ-আপ ওপেন হবে
+        // ফর্ম সাবমিট হওয়ার মুহূর্তের ফাইনাল লজিক
         orderForm.addEventListener('submit', function(e) {
             e.preventDefault(); 
             
-            // ডাবল চেক করার জন্য সাবমিট করার মুহূর্তে নম্বর ভ্যালিডেশন
-            const phoneVal = phoneInput.value.trim();
-            const phonePattern = /^01[3-9]\d{8}$/;
-            
-            if (!phonePattern.test(phoneVal)) {
-                phoneWarning.style.display = 'block';
-                phoneInput.focus();
-                return false;
-            }
+            // সাবমিট করার আগে ইনপুট বক্সের বাংলা নম্বরটিকে আমরা ফিক্সড ইংলিশে রূপান্তর করে দেব
+            phoneInput.value = convertBanglaToEnglish(phoneInput.value.trim());
 
             const pendingModal = document.getElementById('orderPendingModal');
             if(pendingModal) {
