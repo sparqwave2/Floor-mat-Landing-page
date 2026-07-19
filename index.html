@@ -447,17 +447,22 @@
                         </div>
 
                         <form id="orderForm">
+                            <!-- Web3Forms Access Key -->
+                            <input type="hidden" name="access_key" value="25b7478d-daf0-4af7-88c9-89b3ac7ccd06">
+                            <input type="hidden" name="subject" value="New Order: WIDOmart Floor Mat">
+                            <input type="hidden" name="from_name" value="WIDOmart Orders">
+
                             <div class="input-group">
-                                <input type="text" id="name" required placeholder="আপনার সম্পূর্ণ নাম">
+                                <input type="text" name="Customer Name" id="name" required placeholder="আপনার সম্পূর্ণ নাম">
                             </div>
                             
                             <div class="input-group" style="position: relative;">
-                                <input type="text" id="phone" required placeholder="মোবাইল নম্বর">
+                                <input type="text" name="Phone Number" id="phone" required placeholder="মোবাইল নম্বর">
                                 <span id="phone-warning" class="input-warning">⚠️ ০১ দিয়ে শুরু করে সঠিক ১১ ডিজিটের নম্বর দিন</span>
                             </div>
                             
                             <div class="input-group">
-                                <textarea id="address" rows="3" required placeholder="জেলা, থানা, এলাকা ও রোড নম্বর বিস্তারিত লিখুন"></textarea>
+                                <textarea name="Delivery Address" id="address" rows="3" required placeholder="জেলা, থানা, এলাকা ও রোড নম্বর বিস্তারিত লিখুন"></textarea>
                             </div>
                             
                             <button type="submit" id="submitBtn" class="btn-confirm-dynamic" disabled>অর্ডার কনফর্ম করুন</button>
@@ -585,25 +590,58 @@
             addressInput.addEventListener(evt, validateForm);
         });
 
-        // ফর্ম সাবমিট হওয়ার মুহূর্তের ফাইনাল লজিক
+        // ফর্ম সাবমিট হওয়ার মুহূর্তের ফাইনাল লজিক (Web3Forms Integration)
         orderForm.addEventListener('submit', function(e) {
             e.preventDefault(); 
             
             // সাবমিট করার আগে ইনপুট বক্সের বাংলা নম্বরটিকে আমরা ফিক্সড ইংলিশে রূপান্তর করে দেব
             phoneInput.value = convertBanglaToEnglish(phoneInput.value.trim());
 
-            const pendingModal = document.getElementById('orderPendingModal');
-            if(pendingModal) {
-                pendingModal.style.display = 'flex'; // মডাল ওপেন
-            } else {
-                alert('আপনার অর্ডারটি পেন্ডিং এ আছে! আমাদের প্রতিনিধি দল কল দিয়ে আপনার অর্ডারটি কনফর্ম করে নিবে। সাথে থাকুন, ধন্যবাদ।');
-                orderForm.reset();
-                submitBtn.classList.remove('active');
-                submitBtn.setAttribute('disabled', 'true');
-                selectedPrice = 750;
-                selectedDelivery = 80;
-                updateOrderSummary();
+            const formData = new FormData(orderForm);
+            
+            // ডাটাতে নির্বাচিত প্যাকেজ ইনফরমেশন যুক্ত করা
+            const selectedMat = document.querySelector('.mat-item.selected');
+            if(selectedMat) {
+                formData.append("Selected Package", selectedMat.getAttribute('data-name'));
+                formData.append("Total Bill", "Tk " + (selectedPrice + selectedDelivery));
             }
+
+            // সাবমিট বাটন লোডিং স্ট্যাটাস
+            const originalBtnText = submitBtn.innerText;
+            submitBtn.innerText = "অর্ডার সাবমিট হচ্ছে...";
+            submitBtn.setAttribute('disabled', 'true');
+            submitBtn.classList.remove('active');
+
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formData
+            })
+            .then(async (response) => {
+                if (response.status == 200) {
+                    const pendingModal = document.getElementById('orderPendingModal');
+                    if(pendingModal) {
+                        pendingModal.style.display = 'flex'; // মডাল ওপেন
+                    } else {
+                        alert('আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে! আমাদের প্রতিনিধি দল কল দিয়ে আপনার অর্ডারটি কনফর্ম করে নিবে।');
+                    }
+                    orderForm.reset();
+                    selectedPrice = 750;
+                    selectedDelivery = 80;
+                    updateOrderSummary();
+                } else {
+                    alert("দুঃখিত, কোনো একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+                    submitBtn.removeAttribute('disabled');
+                    submitBtn.classList.add('active');
+                }
+            })
+            .catch(error => {
+                alert("ইন্টারনেট সংযোগে সমস্যা হয়েছে! দয়া করে আবার চেষ্টা করুন।");
+                submitBtn.removeAttribute('disabled');
+                submitBtn.classList.add('active');
+            })
+            .finally(() => {
+                submitBtn.innerText = originalBtnText;
+            });
         });
 
         // মডাল বন্ধ করার গ্লোবাল ফাংশন
